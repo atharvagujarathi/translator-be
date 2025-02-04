@@ -2,10 +2,6 @@ const express = require("express");
 const puppeteer = require("puppeteer");
 const axios = require("axios");
 
-process.env.PUPPETEER_CACHE_DIR = "/opt/render/.cache/puppeteer";
-process.env.PUPPETEER_EXECUTABLE_PATH =
-  "/opt/render/.cache/puppeteer/chrome/linux-132.0.6834.110/chrome-linux64/chrome";
-
 const app = express();
 const PORT = 3000;
 
@@ -59,8 +55,6 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await puppeteer.launch({
-      executablePath:
-        "/opt/render/.cache/puppeteer/chrome/linux-132.0.6834.110/chrome-linux64/chrome",
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
