@@ -4,6 +4,7 @@ const axios = require("axios");
 
 const app = express();
 const PORT = 3000;
+process.env.PUPPETEER_CACHE_DIR = "/opt/render/.cache/puppeteer";
 
 app.use(express.json());
 
@@ -55,6 +56,8 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await puppeteer.launch({
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath(),
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
