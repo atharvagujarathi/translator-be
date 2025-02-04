@@ -54,7 +54,10 @@ const translateTextInChunks = async (text) => {
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
     const page = await browser.newPage();
     await page.goto("https://madhubanmurli.org/#", {
       waitUntil: "domcontentloaded",
