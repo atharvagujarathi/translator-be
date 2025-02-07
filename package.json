@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-  "postinstall": "bash ./install-chrome.sh"
+    "postinstall": "bash ./install-chrome.sh"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,6 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "openai": "^4.79.1",
-    "puppeteer": "^24.1.0"
+    "puppeteer": "^24.2.0"
   }
 }

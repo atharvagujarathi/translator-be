@@ -56,10 +56,10 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await puppeteer.launch({
-      executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
-      headless: true,
+      headless: "new", // Ensures compatibility with newer headless modes
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
+
     const page = await browser.newPage();
     await page.goto("https://madhubanmurli.org/#", {
       waitUntil: "domcontentloaded",
