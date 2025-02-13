@@ -55,7 +55,10 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await puppeteer.launch({
-      headless: "new", // Ensures compatibility with newer headless modes
+      headless: "new",
+      executablePath:
+        process.env.PUPPETEER_EXECUTABLE_PATH ||
+        "/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
