@@ -1,11 +1,10 @@
 const express = require("express");
-const puppeteer = require("puppeteer");
 const axios = require("axios");
 const cors = require("cors");
+const { chromium } = require("playwright");
 
 const app = express();
 const PORT = 3000;
-process.env.PUPPETEER_CACHE_DIR = "/opt/render/.cache/puppeteer";
 
 app.use(
   cors({
@@ -54,11 +53,8 @@ const translateTextInChunks = async (text) => {
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath:
-        "C:\\Users\\athar\\.cache\\puppeteer\\chrome\\win64-133.0.6943.53\\chrome-win64\\chrome.exe",
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    const browser = await chromium.launch({
+      headless: true,
     });
 
     const page = await browser.newPage();
