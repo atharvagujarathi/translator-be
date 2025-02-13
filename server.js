@@ -1,11 +1,19 @@
 const express = require("express");
 const puppeteer = require("puppeteer");
 const axios = require("axios");
+const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
 process.env.PUPPETEER_CACHE_DIR = "/opt/render/.cache/puppeteer";
 
+app.use(
+  cors({
+    origin: ["http://localhost:4200"],
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type"],
+  })
+);
 app.use(express.json());
 
 const chunkText = (text) => {
@@ -15,27 +23,19 @@ const chunkText = (text) => {
 const translateTextInChunks = async (text) => {
   const chunks = chunkText(text);
   const translationRequests = chunks.map((chunk) => {
-    return fetch("http://127.0.0.1:8080/translate", {
-      method: "POST",
-      body: JSON.stringify({
+    return axios
+      .post("https://translator-python.onrender.com/translate", {
         q: chunk + "।",
         source: "hi",
         target: "ta",
-        format: "text",
-      }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Translation API failed: ${response.status}`);
-        }
-        return response.json();
       })
-      .then((translatedData) => {
-        if (translatedData && translatedData.translatedText) {
+      .then((response) => {
+        if (response.data && response.data.translatedText) {
+          console.log("rere", response.data.translatedText);
+
           return {
-            original: chunk + "।",
-            translated: translatedData.translatedText,
+            original: chunk + "。",
+            translated: response.data.translatedText,
           };
         } else {
           throw new Error("Translation failed. No translated text received.");
@@ -48,7 +48,6 @@ const translateTextInChunks = async (text) => {
   });
 
   const translatedPairs = await Promise.all(translationRequests);
-
   return translatedPairs.filter((pair) => pair !== null);
 };
 
