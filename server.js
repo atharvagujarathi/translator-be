@@ -57,8 +57,7 @@ app.get("/fetch-and-translate", async (req, res) => {
     const browser = await puppeteer.launch({
       headless: "new",
       executablePath:
-        process.env.PUPPETEER_EXECUTABLE_PATH ||
-        "/opt/render/.cache/puppeteer/chrome/linux-133.0.6943.53/chrome",
+        "C:\\Users\\athar\\.cache\\puppeteer\\chrome\\win64-133.0.6943.53\\chrome-win64\\chrome.exe",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
