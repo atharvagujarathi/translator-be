@@ -54,7 +54,8 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await chromium.launch({
-      headless: true,
+      headless: true, // This is required
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
     const page = await browser.newPage();
