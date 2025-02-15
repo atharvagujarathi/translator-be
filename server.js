@@ -39,11 +39,14 @@ const translateTextInChunks = async (text) => {
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
-    const browser = await puppeteer.launch({
-      headless: "new",
-      executablePath: puppeteer.executablePath(),
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    (async () => {
+      const browser = await puppeteer.launch({
+        headless: "new", // Use the latest headless mode
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
+
+      console.log("Puppeteer launched successfully");
+    })();
 
     const page = await browser.newPage();
     await page.goto("https://madhubanmurli.org/#", {
