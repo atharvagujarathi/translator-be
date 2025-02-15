@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "postinstall": "npx playwright install chromium"
-},
+    "start": "node server.js",
+  "install-browsers": "node node_modules/puppeteer/install.js",
+  "build": "npm install && npm run install-browsers"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,7 +18,6 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "openai": "^4.79.1",
-    "playwright": "^1.50.1",
-    "puppeteer": "^24.2.0"
+    "puppeteer": "^24.2.1"
   }
 }

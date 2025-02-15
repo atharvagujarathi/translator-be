@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const { chromium } = require("playwright");
+const puppeteer = require("puppeteer");
 
 const app = express();
 const PORT = 3000;
@@ -39,10 +39,8 @@ const translateTextInChunks = async (text) => {
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
-    const browser = await chromium.launch({
-      executablePath:
-        "/opt/render/.cache/ms-playwright/chromium/chrome-linux/chrome",
-      headless: true,
+    const browser = await puppeteer.launch({
+      headless: "new",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
