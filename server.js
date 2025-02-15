@@ -55,9 +55,6 @@ app.get("/fetch-and-translate", async (req, res) => {
   try {
     const browser = await chromium.launch({
       headless: true,
-      executablePath:
-        process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
-        "/usr/bin/google-chrome",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
