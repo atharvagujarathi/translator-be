@@ -38,15 +38,16 @@ const translateTextInChunks = async (text) => {
 
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
-  try {
-    (async () => {
-      const browser = await puppeteer.launch({
-        headless: "new", // Use the latest headless mode
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      });
 
-      console.log("Puppeteer launched successfully");
-    })();
+  try {
+    // Launch Puppeteer properly
+    const browser = await puppeteer.launch({
+      headless: "new",
+      executablePath: puppeteer.executablePath(), // Automatically use Puppeteer's installed Chrome
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    console.log("Puppeteer launched successfully");
 
     const page = await browser.newPage();
     await page.goto("https://madhubanmurli.org/#", {
@@ -64,18 +65,19 @@ app.get("/fetch-and-translate", async (req, res) => {
     console.log("Extracted Hindi Text:", hindiText);
 
     if (!hindiText.trim()) {
-      await browser.close();
       return res.status(404).send("Content not found.");
     }
 
     const translatedPairs = await translateTextInChunks(hindiText);
-    await browser.close();
-
-    console.log("Translated Pairs:", translatedPairs);
     res.json({ pairs: translatedPairs });
   } catch (error) {
     console.error("Error fetching or translating content:", error.message);
     res.status(500).send("Internal Server Error");
+  } finally {
+    if (browser) {
+      await browser.close();
+      console.log("Puppeteer closed.");
+    }
   }
 });
 
