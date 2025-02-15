@@ -41,6 +41,7 @@ app.get("/fetch-and-translate", async (req, res) => {
   try {
     const browser = await puppeteer.launch({
       headless: "new",
+      executablePath: puppeteer.executablePath(),
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
