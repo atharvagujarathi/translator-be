@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "postinstall": "npm install && npx playwright install",
+    "postinstall": "if [ \"$ZB\" != \"true\" ]; then npx playwright install; fi",
     "start": "node server.js"
   },
   "keywords": [],
