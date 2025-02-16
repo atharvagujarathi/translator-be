@@ -4,7 +4,7 @@ const cors = require("cors");
 const { chromium } = require("playwright");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
@@ -54,6 +54,7 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await chromium.launch({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
       headless: true,
     });
 
@@ -101,6 +102,6 @@ app.get("/fetch-and-translate", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
