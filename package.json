@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "postinstall": "npx playwright install chromium",
-    "start": "node server.js"
+    "start": "npx playwright install chromium && node server.js"
   },
   "dependencies": {
     "axios": "^1.7.9",

@@ -3,8 +3,6 @@ const axios = require("axios");
 const cors = require("cors");
 const { chromium } = require("playwright");
 
-process.env.PLAYWRIGHT_BROWSERS_PATH = "/tmp/playwright-browsers";
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -56,7 +54,10 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
 
   try {
-    const browser = await chromium.launch({ headless: true });
+    const browser = await chromium.launch({
+      headless: true,
+      executablePath: "/usr/bin/google-chrome-stable",
+    });
     const page = await browser.newPage();
 
     console.log("Navigating to the website...");
