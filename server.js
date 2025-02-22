@@ -53,33 +53,24 @@ const translateTextInChunks = async (text) => {
 
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
-  try {
-    (async () => {
-      const browser = await chromium.launch({
-        headless: true, // Required for Render
-        args: ["--no-sandbox", "--disable-setuid-sandbox"], // Bypass root permissions issue
-      });
 
-      const page = await browser.newPage();
-      await page.goto("https://example.com");
-      console.log(await page.title());
-      await browser.close();
-    })();
+  try {
+    const browser = await chromium.launch({
+      headless: true,
+      executablePath:
+        process.env.PLAYWRIGHT_BROWSERS_PATH ||
+        "/opt/render/.cache/ms-playwright/chromium-1155/chrome-linux/chrome",
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    await page.goto("https://madhubanmurli.org/#");
 
     console.log("Before extracting Hindi text");
-    const hindiText = await page.evaluate(async () => {
-      await new Promise((resolve) => {
-        const interval = setInterval(() => {
-          if (document.querySelector(".lang-hi")) {
-            clearInterval(interval);
-            resolve();
-          }
-        }, 500);
-      });
 
+    const hindiText = await page.evaluate(() => {
       const elements = document.querySelectorAll(".lang-hi");
       let formattedText = "";
-
       elements.forEach((element) => {
         formattedText += element.innerText + " ";
       });
@@ -97,6 +88,7 @@ app.get("/fetch-and-translate", async (req, res) => {
     const translatedPairs = await translateTextInChunks(hindiText);
 
     console.log("Translated Pairs:", translatedPairs);
+    await browser.close();
 
     res.json({ pairs: translatedPairs });
   } catch (error) {
