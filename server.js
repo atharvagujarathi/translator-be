@@ -54,16 +54,17 @@ const translateTextInChunks = async (text) => {
 app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
-    const browser = await chromium.launch({
-      executablePath:
-        "/opt/render/.cache/ms-playwright/chromium-1155/chrome-linux/headless_shell",
-      headless: true,
-    });
+    (async () => {
+      const browser = await chromium.launch({
+        headless: true, // Required for Render
+        args: ["--no-sandbox", "--disable-setuid-sandbox"], // Bypass root permissions issue
+      });
 
-    const page = await browser.newPage();
-    await page.goto("https://madhubanmurli.org/#", {
-      waitUntil: "domcontentloaded",
-    });
+      const page = await browser.newPage();
+      await page.goto("https://example.com");
+      console.log(await page.title());
+      await browser.close();
+    })();
 
     console.log("Before extracting Hindi text");
     const hindiText = await page.evaluate(async () => {
