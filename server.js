@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const { chromium } = require("playwright");
+process.env.PLAYWRIGHT_BROWSERS_PATH = "/tmp/playwright-browsers";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -57,9 +58,6 @@ app.get("/fetch-and-translate", async (req, res) => {
   try {
     const browser = await chromium.launch({
       headless: true,
-      executablePath:
-        process.env.PLAYWRIGHT_BROWSERS_PATH ||
-        "/opt/render/.cache/ms-playwright/chromium-1155/chrome-linux/chrome",
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
 
