@@ -6,6 +6,7 @@ const { chromium } = require("playwright");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// I used this code for the cors issue.
 app.use(
   cors({
     origin: "*",
@@ -54,7 +55,8 @@ app.get("/fetch-and-translate", async (req, res) => {
   console.log("Received request on /fetch-and-translate");
   try {
     const browser = await chromium.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath:
+        "/opt/render/.cache/ms-playwright/chromium-1155/chrome-linux/headless_shell",
       headless: true,
     });
 

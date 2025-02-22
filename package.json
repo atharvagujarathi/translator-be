@@ -2,8 +2,8 @@
   "name": "node",
   "version": "1.0.0",
   "main": "server.js",
-  "scripts": {
-    "postinstall": "if [ \"$ZB\" != \"true\" ]; then npx playwright install; fi",
+   "scripts": {
+  "postinstall": "npx playwright install --with-deps",
     "start": "node server.js"
   },
   "keywords": [],
