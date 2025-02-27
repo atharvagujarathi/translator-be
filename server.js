@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
+const cheerio = require("cheerio");
 const cors = require("cors");
-const { chromium } = require("playwright");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,12 +16,11 @@ app.use(
 );
 app.use(express.json());
 
-const chunkText = (text) => {
-  return text.split(/[।\n]+\s*/).filter((sentence) => sentence.trim() !== "");
-};
-
+// Function to translate text in chunks
 const translateTextInChunks = async (text) => {
-  const chunks = chunkText(text);
+  const chunks = text
+    .split(/[।\n]+\s*/)
+    .filter((sentence) => sentence.trim() !== "");
   const translationRequests = chunks.map((chunk) =>
     axios
       .post("https://translator-python.onrender.com/translate", {
@@ -31,9 +30,8 @@ const translateTextInChunks = async (text) => {
       })
       .then((response) => {
         if (response.data && response.data.translatedText) {
-          console.log("Translated:", response.data.translatedText);
           return {
-            original: chunk + "。",
+            original: chunk + "।",
             translated: response.data.translatedText,
           };
         } else {
@@ -50,46 +48,36 @@ const translateTextInChunks = async (text) => {
   return translatedPairs.filter((pair) => pair !== null);
 };
 
+// Fetch & Translate Murli Content
 app.get("/fetch-and-translate", async (req, res) => {
-  console.log("Received request on /fetch-and-translate");
+  const date = req.query.date || "2025-02-27"; // Default date if not provided
+  const murliUrl = `https://madhubanmurli.org/murlis/hi/html/murli-${date}.html`;
 
   try {
-    const browser = await chromium.launch({
-      headless: true,
-      executablePath: "/usr/bin/google-chrome-stable",
-    });
-    const page = await browser.newPage();
-
-    console.log("Navigating to the website...");
-    await page.goto("https://madhubanmurli.org/#", {
-      waitUntil: "networkidle",
+    const response = await axios.get(murliUrl, {
+      headers: { "User-Agent": "Mozilla/5.0" }, // Bypass bot detection
     });
 
-    console.log("Waiting for content to load...");
-    await page.waitForSelector(".lang-hi", { timeout: 10000 });
+    const $ = cheerio.load(response.data);
 
-    const hindiText = await page.evaluate(() => {
-      return Array.from(document.querySelectorAll(".lang-hi"))
-        .map((el) => el.innerText.trim())
-        .join(" ");
-    });
+    // Extract Hindi text from relevant classes
+    const hindiText = $(".lang-hi, .essence-txt")
+      .map((_, el) => $(el).text().trim())
+      .get()
+      .join(" ");
 
-    await browser.close();
+    if (!hindiText) {
+      return res.status(404).send("Murli content not found.");
+    }
 
     console.log("Extracted Hindi Text:", hindiText);
 
-    if (!hindiText) {
-      return res.status(404).send("Content not found on the site.");
-    }
-
+    // Translate the extracted text
     const translatedPairs = await translateTextInChunks(hindiText);
-
-    console.log("Translated Pairs:", translatedPairs);
-
     res.json({ pairs: translatedPairs });
   } catch (error) {
-    console.error("Error fetching or translating content:", error.message);
-    res.status(500).send("Internal Server Error");
+    console.error("Error fetching Murli:", error.message);
+    res.status(500).send("Failed to fetch or translate the Murli.");
   }
 });
 
